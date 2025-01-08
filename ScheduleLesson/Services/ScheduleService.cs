@@ -41,7 +41,6 @@ namespace ScheduleLesson.Services
             }
             catch (DbUpdateConcurrencyException ex)////??????
             {
-                //throw new NotSupportedException();// error 500
                 Console.WriteLine(ex.Message);
                 return null;
             }
