@@ -13,12 +13,8 @@ namespace ScheduleLesson.Services
 
         public async Task<List<Schedule>> GetAllSchedule()
         {
-
-            IQueryable<string> res = _context.Schedules.Select(x => x.ClassName);
-            DateTime dateTime = DateTime.Now;
-            var query = _context.Schedules.Where(x => x.DateTime.Year == dateTime.Year).GroupBy(o => new { o.ClassName, o.DateTime }).Select(x => x.Key);
-            string ф = query.ToQueryString();
-            return null;// await query.ToListAsync();
+            Task<List<Schedule>> result = _context.Schedules.ToListAsync();
+            return await result;
         }
         public async Task<Schedule> GetSchedule(int id)
         {
@@ -39,10 +35,9 @@ namespace ScheduleLesson.Services
                 await _context.SaveChangesAsync();
                 return updateSchedule;
             }
-            catch (DbUpdateConcurrencyException ex)////??????
+            catch (DbUpdateConcurrencyException ex)
             {
-                Console.WriteLine(ex.Message);
-                return null;
+                throw new CustomException("Id not found", 404);
             }
 
             catch (Exception ex)
