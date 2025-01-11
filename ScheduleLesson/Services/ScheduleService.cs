@@ -6,11 +6,13 @@ namespace ScheduleLesson.Services
     public class ScheduleService : IScheduleService
     {
         private readonly ApiDbContext _context;
-        public ScheduleService(ApiDbContext context)
+        private readonly ILogger<ScheduleService> _logger;
+
+        public ScheduleService(ApiDbContext context, ILogger<ScheduleService> logger)
         {
             _context = context;
+            _logger = logger;
         }
-
         public async Task<List<Schedule>> GetAllSchedule()
         {
             Task<List<Schedule>> result = _context.Schedules.ToListAsync();
@@ -18,7 +20,8 @@ namespace ScheduleLesson.Services
         }
         public async Task<Schedule> GetSchedule(int id)
         {
-            return await _context.Schedules.FindAsync(id);
+            Schedule? result = await _context.Schedules.FindAsync(id);
+            return result;
         }
         public async Task<Schedule> AddSchedule(Schedule schedule)
         {
@@ -26,25 +29,24 @@ namespace ScheduleLesson.Services
             await _context.SaveChangesAsync();
             return await GetSchedule(schedule.Id);
         }
-
         public async Task<Schedule> UpdateSchedule(Schedule updateSchedule)
         {
+            _logger.LogInformation("Зміна користувача з ID: {updateSchedule}", updateSchedule);
+            _context.Entry(updateSchedule).State = EntityState.Modified;
             try
             {
-                _context.Entry(updateSchedule).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
-                return updateSchedule;
             }
             catch (DbUpdateConcurrencyException ex)
             {
-                throw new CustomException("Id not found", 404);
+                throw new StatusCodeException($"Користувач з ID: {updateSchedule.Id} не знайдено", 404);
             }
-
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 return null;
             }
+            return updateSchedule;
         }
         public async Task<Schedule> DeleteSchedule(int id)
         {
@@ -53,7 +55,6 @@ namespace ScheduleLesson.Services
             await _context.SaveChangesAsync();
             return res;
         }
-
         public async Task<List<string>> GetDateTimeSchedule(DateTime dateTime)
         {
             return await _context.Schedules.Where(x => x.DateTime.Date == dateTime.Date).Select(x => $"{x.Order}. {x.ClassName} {x.Content}").ToListAsync();
