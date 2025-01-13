@@ -7,7 +7,5 @@
         {
             StatusCode = statusCode;
         }
-
-
     }
 }
