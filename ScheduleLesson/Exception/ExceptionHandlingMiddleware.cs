@@ -4,12 +4,13 @@
     {
         private readonly RequestDelegate _next;
         private readonly ILogger<ExceptionHandlingMiddleware> _logger;
+        private const int StatusCodeInternalServerError = 500;
+
         public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
         {
             _next = next;
             _logger = logger;
         }
-
         public async Task InvokeAsync(HttpContext context)
         {
             try
@@ -24,24 +25,15 @@
             catch (Exception ex)
             {
                 _logger.LogError("Внутрішня помилка сервера");
-                await HandleExceptionAsync(context, 500, ex.Message);
+                await HandleExceptionAsync(context, StatusCodeInternalServerError, ex.Message);
             }
-
         }
-
         private static Task HandleExceptionAsync(HttpContext context, int statusCode, string message)
         {
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = statusCode;
-
             var response = new { Message = message };
             return context.Response.WriteAsync(message);
-            //return context.Response.WriteAsync(new
-            //{
-            //    StatusCode = statusCode,
-            //    Message = message,
-            //    Context = context
-            //}.ToString());
         }
     }
 }
