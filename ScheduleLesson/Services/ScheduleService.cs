@@ -7,7 +7,7 @@ namespace ScheduleLesson.Services
     {
         private readonly ApiDbContext _context;
         private readonly ILogger<ScheduleService> _logger;
-        private const int StatusCodeInternalServerError = 500;
+        public const int StatusCodeInternalServerError = 404;
 
 
         public ScheduleService(ApiDbContext context, ILogger<ScheduleService> logger)
@@ -33,30 +33,19 @@ namespace ScheduleLesson.Services
         }
         public async Task<Schedule> UpdateSchedule(Schedule updateSchedule)
         {
-            try
+            _logger.LogInformation("Зміна користувача з ID: {updateSchedule}", updateSchedule);
+            Schedule? result = await _context.Schedules.FindAsync(updateSchedule.Id);
+            if (result == null)
             {
-                _logger.LogInformation("Зміна користувача з ID: {updateSchedule}", updateSchedule);
-                Schedule? result = await _context.Schedules.FindAsync(updateSchedule.Id);
-                if (result == null)
-                {
-                    throw new DbUpdateConcurrencyException();
-                }
-                result.DateTime = updateSchedule.DateTime;
-                result.Order = updateSchedule.Order;
-                result.Content = updateSchedule.Content;
-                result.ClassName = updateSchedule.ClassName;
-                await _context.SaveChangesAsync();
-                _logger.LogInformation("Кінець зміни користувача з ID: {updateSchedule}", updateSchedule);
+                throw new StatusCodeException($"Користувача з ID: {updateSchedule.Id} не знайдено", StatusCodeInternalServerError);
             }
-            catch (DbUpdateConcurrencyException ex)
-            {
-                throw new StatusCodeException($"Користувач з ID: {updateSchedule.Id} не знайдено", StatusCodeInternalServerError);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                throw new Exception();
-            }
+            result.DateTime = updateSchedule.DateTime;
+            result.Order = updateSchedule.Order;
+            result.Content = updateSchedule.Content;
+            result.ClassName = updateSchedule.ClassName;
+            await _context.SaveChangesAsync();
+            _logger.LogInformation("Кінець зміни користувача з ID: {updateSchedule}", updateSchedule);
+
             return updateSchedule;
         }
         public async Task<Schedule> DeleteSchedule(int id)

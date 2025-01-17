@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using ScheduleLesson.Services;
 using Serilog;
+using Serilog.Sinks.MSSqlServer;
 
 namespace ScheduleLesson
 {
@@ -9,8 +10,6 @@ namespace ScheduleLesson
         public static void Main(string[] args)
         {
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-
-            // Add services to the container.
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -24,11 +23,24 @@ namespace ScheduleLesson
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
 
+            // Рядок підключення до бази даних з appsettings.json
+            string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+            // Налаштування Serilog
             Log.Logger = new LoggerConfiguration()
-                .WriteTo.Console()
-                .WriteTo.File("logs/api-log.txt", rollingInterval: RollingInterval.Day)
+                .ReadFrom.Configuration(builder.Configuration) // Читає налаштування з appsettings.json
+                .WriteTo.Console() // Логування в консоль
+                .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day) // Логування у файл
+                .WriteTo.MSSqlServer(
+                    connectionString: connectionString,
+                    sinkOptions: new MSSqlServerSinkOptions
+                    {
+                        TableName = "Logs", // Назва таблиці для логів
+                        AutoCreateSqlTable = true // Автоматичне створення таблиці
+                    })
                 .CreateLogger();
 
+            // Додаємо Serilog до застосунку
             builder.Host.UseSerilog();
 
             WebApplication app = builder.Build();
@@ -43,6 +55,9 @@ namespace ScheduleLesson
             app.UseMiddleware<ExceptionHandlingMiddleware>();
 
             app.UseHttpsRedirection();
+
+            // Додаємо логування запитів
+            app.UseSerilogRequestLogging();
 
             app.UseAuthorization();
 
