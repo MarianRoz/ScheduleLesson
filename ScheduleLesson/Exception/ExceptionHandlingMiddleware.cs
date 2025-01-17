@@ -4,7 +4,7 @@
     {
         private readonly RequestDelegate _next;
         private readonly ILogger<ExceptionHandlingMiddleware> _logger;
-        private const int StatusCodeInternalServerError = 500;
+        StatusCodeException StatusCodeInternalServerError;
 
         public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
         {
@@ -19,13 +19,13 @@
             }
             catch (StatusCodeException ex)
             {
-                _logger.LogWarning("Користувач не знайдений");
+                _logger.LogError("Користувач не знайдений");
                 await HandleExceptionAsync(context, ex.StatusCode, ex.Message);
             }
             catch (Exception ex)
             {
                 _logger.LogError("Внутрішня помилка сервера");
-                await HandleExceptionAsync(context, StatusCodeInternalServerError, ex.Message);
+                await HandleExceptionAsync(context, StatusCodeInternalServerError.StatusCode, ex.Message);
             }
         }
         private static Task HandleExceptionAsync(HttpContext context, int statusCode, string message)
