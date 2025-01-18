@@ -1,11 +1,11 @@
-﻿namespace ScheduleLesson
+﻿using System.Net;
+
+namespace ScheduleLesson
 {
     public class ExceptionHandlingMiddleware
     {
         private readonly RequestDelegate _next;
         private readonly ILogger<ExceptionHandlingMiddleware> _logger;
-        StatusCodeException StatusCodeInternalServerError;
-
         public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
         {
             _next = next;
@@ -25,7 +25,7 @@
             catch (Exception ex)
             {
                 _logger.LogError("Внутрішня помилка сервера");
-                await HandleExceptionAsync(context, StatusCodeInternalServerError.StatusCode, ex.Message);
+                await HandleExceptionAsync(context, (int)HttpStatusCode.NotFound, ex.Message);
             }
         }
         private static Task HandleExceptionAsync(HttpContext context, int statusCode, string message)

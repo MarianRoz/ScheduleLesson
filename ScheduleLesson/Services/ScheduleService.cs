@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ScheduleLesson.Models;
+using System.Net;
 
 namespace ScheduleLesson.Services
 {
@@ -7,9 +8,6 @@ namespace ScheduleLesson.Services
     {
         private readonly ApiDbContext _context;
         private readonly ILogger<ScheduleService> _logger;
-        public const int StatusCodeInternalServerError = 404;
-
-
         public ScheduleService(ApiDbContext context, ILogger<ScheduleService> logger)
         {
             _context = context;
@@ -37,7 +35,7 @@ namespace ScheduleLesson.Services
             Schedule? result = await _context.Schedules.FindAsync(updateSchedule.Id);
             if (result == null)
             {
-                throw new StatusCodeException($"Користувача з ID: {updateSchedule.Id} не знайдено", StatusCodeInternalServerError);
+                throw new StatusCodeException($"Користувача з ID: {updateSchedule.Id} не знайдено", (int)HttpStatusCode.NotFound);
             }
             result.DateTime = updateSchedule.DateTime;
             result.Order = updateSchedule.Order;
