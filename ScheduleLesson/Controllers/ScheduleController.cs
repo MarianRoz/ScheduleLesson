@@ -40,8 +40,6 @@ namespace ScheduleLesson.Controllers
         public async Task<ActionResult<Schedule>> UpdateSchedule(Schedule Id)
         {
             Schedule? dbScheduleUpdated = await _scheduleService.UpdateSchedule(Id);
-            if (dbScheduleUpdated is null)
-                return NotFound("Schedule not found");
             return Ok("Updated Successfully");
         }
         [HttpDelete("{id}")]
