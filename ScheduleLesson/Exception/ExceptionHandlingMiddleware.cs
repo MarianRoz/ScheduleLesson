@@ -25,14 +25,13 @@ namespace ScheduleLesson
             catch (Exception ex)
             {
                 _logger.LogError("Внутрішня помилка сервера");
-                await HandleExceptionAsync(context, (int)HttpStatusCode.NotFound, ex.Message);
+                await HandleExceptionAsync(context, (int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
         private static Task HandleExceptionAsync(HttpContext context, int statusCode, string message)
         {
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = statusCode;
-            var response = new { Message = message };
             return context.Response.WriteAsync(message);
         }
     }
