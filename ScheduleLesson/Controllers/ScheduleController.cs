@@ -44,10 +44,10 @@ namespace ScheduleLesson.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<Schedule>> UpdateSchedule(Schedule Id)
+        public async Task<ActionResult<Schedule>> UpdateSchedule(Schedule id)
         {
             Guid userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            Schedule? dbScheduleUpdated = await _scheduleService.UpdateSchedule(Id, userId);
+            Schedule? dbScheduleUpdated = await _scheduleService.UpdateSchedule(id, userId);
             return Ok("Updated Successfully");
         }
 
