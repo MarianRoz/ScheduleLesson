@@ -4,11 +4,11 @@ namespace ScheduleLesson.Services
 {
     public interface IScheduleService
     {
-        Task<List<Schedule>> GetAllSchedule(string? userId);
-        Task<Schedule> GetScheduleById(int id, string? userId);
-        Task<Schedule> AddSchedule(Schedule schedule, string userId);
-        Task<Schedule> UpdateSchedule(Schedule schedule, string userId);
-        Task<Schedule> DeleteSchedule(int id, string userId);
-        Task<List<string>> GetDateTimeSchedule(DateTime dateTime, string userId);
+        Task<List<Schedule>> GetAllSchedule(Guid userId);
+        Task<Schedule> GetScheduleById(int id, Guid userId);
+        Task<Schedule> AddSchedule(Schedule schedule, Guid userId);
+        Task<Schedule> UpdateSchedule(Schedule schedule, Guid userId);
+        Task<Schedule> DeleteSchedule(int id, Guid userId);
+        Task<List<string>> GetDateTimeSchedule(DateTime dateTime, Guid userId);
     }
 }

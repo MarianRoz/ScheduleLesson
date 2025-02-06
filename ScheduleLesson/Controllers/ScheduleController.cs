@@ -20,7 +20,7 @@ namespace ScheduleLesson.Controllers
         [HttpGet]
         public async Task<ActionResult<Schedule>> GetAllSchedule()
         {
-            string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Отримуємо ідентифікатор користувача
+            Guid userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             List<Schedule> result = await _scheduleService.GetAllSchedule(userId);
             return Ok(result);
         }
@@ -28,7 +28,7 @@ namespace ScheduleLesson.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Schedule>> GetSchedule(int id)
         {
-            string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            Guid userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             Schedule? scheduleById = await _scheduleService.GetScheduleById(id, userId);
             if (scheduleById is null)
                 return NotFound("Schedule not found");
@@ -38,7 +38,7 @@ namespace ScheduleLesson.Controllers
         [HttpPost]
         public async Task<ActionResult<Schedule>> AddSchedule(Schedule schedule)
         {
-            string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            Guid userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             Schedule result = await _scheduleService.AddSchedule(schedule, userId);
             return Ok(result);
         }
@@ -46,7 +46,7 @@ namespace ScheduleLesson.Controllers
         [HttpPut]
         public async Task<ActionResult<Schedule>> UpdateSchedule(Schedule Id)
         {
-            string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            Guid userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             Schedule? dbScheduleUpdated = await _scheduleService.UpdateSchedule(Id, userId);
             return Ok("Updated Successfully");
         }
@@ -54,7 +54,7 @@ namespace ScheduleLesson.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<List<Schedule>>> DeleteSchedule(int id)
         {
-            string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            Guid userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             Schedule? scheduleDeleted = await _scheduleService.DeleteSchedule(id, userId);
             if (scheduleDeleted is null)
                 return NotFound("Schedule not found");
@@ -64,7 +64,7 @@ namespace ScheduleLesson.Controllers
         [HttpGet]
         public async Task<ActionResult<List<string>>> GetDateTimeSchedule(DateTime dateTime)
         {
-            string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            Guid userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             List<string> result = await _scheduleService.GetDateTimeSchedule(dateTime, userId);
             return Ok(result);
 

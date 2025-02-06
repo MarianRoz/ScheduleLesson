@@ -13,28 +13,28 @@ namespace ScheduleLesson.Services
             _context = context;
             _logger = logger;
         }
-        public async Task<List<Schedule>> GetAllSchedule(string? userId)
+        public async Task<List<Schedule>> GetAllSchedule(Guid userId)
         {
             Task<List<Schedule>> result = _context.Schedules
                 .Where(s => s.UserId == userId)
                 .ToListAsync();
             return await result;
         }
-        public async Task<Schedule> GetScheduleById(int id, string? userId)
+        public async Task<Schedule> GetScheduleById(int id, Guid userId)
         {
             Schedule? result = await _context.Schedules
                 .Where(s => s.UserId == userId && s.Id == id)
                 .FirstOrDefaultAsync();
             return result;
         }
-        public async Task<Schedule> AddSchedule(Schedule schedule, string userId)
+        public async Task<Schedule> AddSchedule(Schedule schedule, Guid userId)
         {
             schedule.UserId = userId;
             _context.Schedules.Add(schedule);
             await _context.SaveChangesAsync();
             return await GetScheduleById(schedule.Id, userId); ;
         }
-        public async Task<Schedule> UpdateSchedule(Schedule updateSchedule, string userId)
+        public async Task<Schedule> UpdateSchedule(Schedule updateSchedule, Guid userId)
         {
             _logger.LogInformation("Зміна користувача з ID: {updateSchedule}", updateSchedule);
             Schedule? result = await _context.Schedules
@@ -53,7 +53,7 @@ namespace ScheduleLesson.Services
             _logger.LogInformation("Кінець зміни користувача з ID: {updateSchedule}", userId);
             return updateSchedule;
         }
-        public async Task<Schedule> DeleteSchedule(int id, string userId)
+        public async Task<Schedule> DeleteSchedule(int id, Guid userId)
         {
             Schedule? result = await _context.Schedules
                             .Where(s => s.UserId == userId && s.Id == id)
@@ -62,7 +62,7 @@ namespace ScheduleLesson.Services
             await _context.SaveChangesAsync();
             return result;
         }
-        public async Task<List<string>> GetDateTimeSchedule(DateTime dateTime, string userId)
+        public async Task<List<string>> GetDateTimeSchedule(DateTime dateTime, Guid userId)
         {
             return await _context.Schedules.Where(x => x.UserId == userId && x.DateTime.Date == dateTime.Date).Select(x => $"{x.Order}. {x.ClassName} {x.Content}").ToListAsync();
         }
