@@ -48,7 +48,6 @@ namespace ScheduleLesson.Services
             result.Order = updateSchedule.Order;
             result.Content = updateSchedule.Content;
             result.ClassName = updateSchedule.ClassName;
-            //result.UserId = userId;
             await _context.SaveChangesAsync();
             _logger.LogInformation("Кінець зміни користувача з ID: {updateSchedule}", userId);
             return updateSchedule;
