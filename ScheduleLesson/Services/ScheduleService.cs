@@ -34,23 +34,23 @@ namespace ScheduleLesson.Services
             await _context.SaveChangesAsync();
             return await GetScheduleById(schedule.Id, userGuid); ;
         }
-        public async Task<Schedule> UpdateSchedule(Schedule updateSchedule, Guid userGuid)
+        public async Task<Schedule> UpdateSchedule(Schedule schedule, Guid userGuid)
         {
-            _logger.LogInformation("Зміна користувача з ID: {updateSchedule}", updateSchedule);
+            _logger.LogInformation("Зміна користувача з ID: {updateSchedule}", schedule);
             Schedule? result = await _context.Schedules
-                .Where(s => s.UserGuid == userGuid && s.Id == updateSchedule.Id)
+                .Where(s => s.UserGuid == userGuid && s.Id == schedule.Id)
                 .FirstOrDefaultAsync();
             if (result == null)
             {
-                throw new StatusCodeException($"Користувача з ID: {updateSchedule.Id} не знайдено", (int)HttpStatusCode.NotFound);
+                throw new StatusCodeException($"Користувача з ID: {schedule.Id} не знайдено", (int)HttpStatusCode.NotFound);
             }
-            result.DateTime = updateSchedule.DateTime;
-            result.Order = updateSchedule.Order;
-            result.Content = updateSchedule.Content;
-            result.ClassName = updateSchedule.ClassName;
+            result.DateTime = schedule.DateTime;
+            result.Order = schedule.Order;
+            result.Content = schedule.Content;
+            result.ClassName = schedule.ClassName;
             await _context.SaveChangesAsync();
             _logger.LogInformation("Кінець зміни користувача з ID: {updateSchedule}", userGuid);
-            return updateSchedule;
+            return schedule;
         }
         public async Task<Schedule> DeleteSchedule(int id, Guid userGuid)
         {
