@@ -10,6 +10,6 @@ namespace ScheduleLesson.Models
         public int Order { get; set; }
         public required string Content { get; set; }
         public string ClassName { get; set; }
-        public Guid UserId { get; set; }
+        public Guid UserGuid { get; set; }
     }
 }
